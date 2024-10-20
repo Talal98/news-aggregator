@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 export const newsApi = async (params: any) => {
-  params.apiKey = '1e057c312350455a8a063259fc536e57'
+  params.apiKey = 'd5e896e8566d4e0d8fb9ea59816080e6'
   const response = await axios.get(`https://newsapi.org/v2/top-headlines`, { params });
   return response.data.articles;
 };
