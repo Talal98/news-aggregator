@@ -15,3 +15,10 @@ export const guardianApi = async (params: any) => {
   const response = await axios.get(`https://content.guardianapis.com/search`, { params });
   return response?.data?.response?.results;
 };
+
+export const newYorkTimesApi = async (params: any) => {
+  params["api-key"] = 'yftUizkj5b99g6dd1igWpsbIQJlARVUo';
+  params["sort"] = 'newest';
+  const response = await axios.get(`https://api.nytimes.com/svc/search/v2/articlesearch.json`, { params });
+  return response?.data?.response?.docs;
+}

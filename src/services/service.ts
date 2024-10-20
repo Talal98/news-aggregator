@@ -1,5 +1,5 @@
 import { categoryToGuardian, guardianToCategory } from "../utils/constants";
-import { guardianApi, newsApi } from "./api";
+import { guardianApi, newYorkTimesApi, newsApi } from "./api";
 
 export const fetchNewsApiArticles = async (
 	query: string,
@@ -102,6 +102,70 @@ export const fetchGuardianArticles = async (
 				name: 'Guardian',
 			},
 			category: guardianToCategory[article.sectionId],
+		}
+	});
+
+	return mappedResults;
+}
+
+export const fetchNewYorkTimesArticles = async (
+	query: string,
+	category: any,
+) => {
+	let results: any = []
+
+	if (category && category.length > 0) {
+		if (category.length > 1) {
+			const updatedCategory = category.map((cat: any) => {
+				if (cat === 'Entertainment') {
+					return 'culture'
+				} else {
+					return cat.toLowerCase()
+				}
+			});
+			const sectionString = updatedCategory.join('", "');
+			for (let i = 0; i < 2; i++) {
+				const response = await newYorkTimesApi({
+					q: query,
+					fq: `news_desk:("${sectionString}")`,
+					page: i,
+				});
+				results = results.concat(response)
+			}
+		} else {
+			const updatedCategory = category[0] === 'Entertainment' ? 'culture' : category[0].toLowerCase();
+			for (let i = 0; i < 2; i++) {
+				const response = await newYorkTimesApi({
+					q: query,
+					fq: `news_desk:("${updatedCategory}")`,
+					page: i,
+				});
+				results = results.concat(response)
+			}
+		}
+	}
+
+	if (results.length === 0) {
+		for (let i = 0; i < 2; i++) {
+			const response = await newYorkTimesApi({
+				q: query,
+				page: i,
+			});
+			results = results.concat(response);
+		}
+	}
+
+	const mappedResults = results.map((article: any) => {
+		return {
+			title: article?.headline?.main,
+			description: article?.abstract,
+			urlToImage: article?.multimedia?.length > 0 ? `https://www.nytimes.com/${article.multimedia[0].url}` : '',
+			publishedAt: article?.pub_date,
+			url: article?.web_url,
+			source: {
+				name: 'The New York Times',
+			},
+			category: article?.news_desk === 'Culture' ? 'Entertainment' : article?.news_desk,
 		}
 	});
 

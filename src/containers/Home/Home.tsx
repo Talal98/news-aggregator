@@ -5,7 +5,7 @@ import ArticleCard from '../../components/ArticleCard/ArticleCard';
 import moment, { Moment } from 'moment';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useNavigate } from "react-router-dom";
-import { fetchGuardianArticles, fetchNewsApiArticles } from '../../services/service';
+import { fetchGuardianArticles, fetchNewYorkTimesArticles, fetchNewsApiArticles } from '../../services/service';
 import { categories, sources } from '../../utils/constants';
 
 const Home = () => {
@@ -25,7 +25,7 @@ const Home = () => {
 	useEffect(() => {
 		const handler = setTimeout(() => {
 			setDebouncedSearchTerm(searchTerm);
-		}, 500); // 500ms debounce delay
+		}, 500); 
 
 		return () => {
 			clearTimeout(handler);
@@ -40,7 +40,7 @@ const Home = () => {
 		const loadArticles = async () => {
 			try {
 				setLoading(true);
-				const [guardianArticles, fetchedArticles] = await Promise.all([
+				const [guardianArticles, newsApiArticles, newYorkTimesArticles] = await Promise.all([
 					fetchGuardianArticles(debouncedSearchTerm, preferredCategories ? JSON.parse(preferredCategories) : null),
 					fetchNewsApiArticles(
 						debouncedSearchTerm,
@@ -50,9 +50,9 @@ const Home = () => {
 							categories,
 						preferredSources ? JSON.parse(preferredSources) : null,
 					),
+					fetchNewYorkTimesArticles(debouncedSearchTerm, preferredCategories ? JSON.parse(preferredCategories) : null)
 				]);
-				
-				setArticles([...guardianArticles, ...fetchedArticles]);
+				setArticles([...guardianArticles, ...newsApiArticles, ...newYorkTimesArticles]);
 				setLoading(false);
 			} catch (error) {
 				console.error('Error fetching articles', error);
