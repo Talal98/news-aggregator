@@ -6,3 +6,12 @@ export const newsApi = async (params: any) => {
   const response = await axios.get(`https://newsapi.org/v2/top-headlines`, { params });
   return response.data.articles;
 };
+
+export const guardianApi = async (params: any) => {
+  params["api-key"] = '2123ea32-b8f2-427b-b7d9-a8e8fa56ab2d'
+  params["page-size"] = 200
+  params["show-fields"] = 'thumbnail,trailText'
+  params["order-by"] = 'newest'
+  const response = await axios.get(`https://content.guardianapis.com/search`, { params });
+  return response?.data?.response?.results;
+};

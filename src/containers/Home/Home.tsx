@@ -5,7 +5,7 @@ import ArticleCard from '../../components/ArticleCard/ArticleCard';
 import moment, { Moment } from 'moment';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useNavigate } from "react-router-dom";
-import { fetchNewsApiArticles } from '../../services/service';
+import { fetchGuardianArticles, fetchNewsApiArticles } from '../../services/service';
 import { categories, sources } from '../../utils/constants';
 
 const Home = () => {
@@ -40,12 +40,19 @@ const Home = () => {
 		const loadArticles = async () => {
 			try {
 				setLoading(true);
-				const fetchedArticles = await fetchNewsApiArticles(
-					debouncedSearchTerm,
-					preferredCategories ? JSON.parse(preferredCategories) : null,
-					preferredSources ? JSON.parse(preferredSources) : null,
-				);
-				setArticles(fetchedArticles);
+				const [guardianArticles, fetchedArticles] = await Promise.all([
+					fetchGuardianArticles(debouncedSearchTerm, preferredCategories ? JSON.parse(preferredCategories) : null),
+					fetchNewsApiArticles(
+						debouncedSearchTerm,
+						preferredCategories ?
+							JSON.parse(preferredCategories).length > 0 ? JSON.parse(preferredCategories) : categories
+							:
+							categories,
+						preferredSources ? JSON.parse(preferredSources) : null,
+					),
+				]);
+				
+				setArticles([...guardianArticles, ...fetchedArticles]);
 				setLoading(false);
 			} catch (error) {
 				console.error('Error fetching articles', error);
@@ -60,7 +67,6 @@ const Home = () => {
 
 	useEffect(() => {
 		if (fromDate || toDate || category || source) {
-			console.log(fromDate, toDate, category, source);
 			let filtered: any[] = [];
 			if (category) {
 				const filterationArticles = filtered.length > 0 ? filtered : articles;
@@ -142,12 +148,14 @@ const Home = () => {
 						value={fromDate}
 						onChange={(date) => setFromDate(date)}
 						sx={{ mb: { xs: 2, sm: 0 } }}
+						slotProps={{ field: { clearable: true } }}
 					/>
 
 					<DatePicker
 						label="To"
 						value={toDate}
 						onChange={(date) => setToDate(date)}
+						slotProps={{ field: { clearable: true } }}
 					/>
 				</Box>
 
@@ -159,13 +167,13 @@ const Home = () => {
 				}
 
 				{
-					!loading && finalArticles.length === 0 &&
+					!loading && finalArticles?.length === 0 &&
 					<Typography variant="h6">No articles found</Typography>
 				}
 
-				{!loading && finalArticles.length !== 0 &&
+				{!loading && finalArticles?.length !== 0 &&
 					<Grid container spacing={3}>
-						{finalArticles.map((article: any, idx: number) => {
+						{finalArticles?.map((article: any, idx: number) => {
 							if (article.title !== '[Removed]') {
 								return <Grid item xs={12} sm={6} md={4} key={idx}>
 									<ArticleCard
