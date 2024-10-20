@@ -35,7 +35,6 @@ const Home = () => {
 	useEffect(() => {
 		const preferredCategories = localStorage.getItem('preferredCategories');
 		const preferredSources = localStorage.getItem('preferredSources');
-		const preferredAuthors = localStorage.getItem('preferredAuthors');
 
 		const loadArticles = async () => {
 			try {

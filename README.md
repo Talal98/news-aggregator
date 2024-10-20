@@ -1,50 +1,55 @@
-# React + TypeScript + Vite
+# News Aggregator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a frontend web application that aggregates news from various sources and displays them in a user-friendly, customizable interface. Users can search for news articles by keywords, filter by date, category, and source, and personalize their news feed based on preferred sources, categories, and authors. The app is fully mobile-responsive and containerized using Docker for easy deployment.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Article Search and Filtering**: Search for news articles by keyword, filter by date, category, and source.
 
-## Expanding the ESLint configuration
+- **Personalized News Feed**: Customize your feed by selecting preferred sources, categories, and authors.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **Mobile-Responsive Design**: Optimized for mobile devices for a smooth user experience on any screen size.
 
-- Configure the top-level `parserOptions` property like this:
+## APIs Used
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- NewsApi
+- The Guardian
+- The New York Times
+
+## Steps To Run Using Docker
+
+### Step 1: Clone the Repository
+
+If you haven't already, clone the repository and change directory to it:
+
+```
+git clone https://github.com/Talal98/news-aggregator.git
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
 ```
+cd news-aggregator
+```
+
+### Step 2: Build and Run the Docker Container
+
+You should be in the root directory of the repo for this step.
+
+Build the Docker image
+
+```
+docker build -t news-aggregator .
+```
+
+Run the Docker container
+
+```
+docker run -p 8080:80 news-aggregator
+```
+
+### Step 3: Access the Application
+
+Once the container is running, open your web browser and navigate to:
+
+http://localhost:8080
+
+You should see the application running.
